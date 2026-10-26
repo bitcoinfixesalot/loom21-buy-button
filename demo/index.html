@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Loom21 Buy button demo</title>
+  <style>
+    body { font: 16px/1.5 system-ui, sans-serif; margin: 0; padding: 24px 16px 64px; background: #faf9fb; color: #1c1b1f; }
+    main { max-width: 880px; margin: 0 auto; }
+    h1 { font-size: 26px; margin: 0 0 4px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin: 24px 0; }
+    .card { background: #fff; border: 1px solid #e3e0e8; border-radius: 12px; padding: 16px; display: grid; gap: 8px; justify-items: start; }
+    .card.dark { background: #1d1b20; color: #e8e3ec; border-color: #49454f; }
+    .card h2 { font-size: 15px; margin: 0; }
+    .card p { margin: 0; font-size: 13px; color: inherit; opacity: .75; }
+    code, pre { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 13px; }
+    pre { background: #1d1b20; color: #e8e3ec; padding: 12px; border-radius: 8px; overflow: auto; }
+    #log { max-height: 220px; overflow: auto; }
+    form { display: grid; gap: 8px; grid-template-columns: 2fr 1fr 2fr auto; align-items: end; }
+    form label { display: grid; font-size: 13px; }
+    form input { font: inherit; padding: 6px 8px; }
+    @media (max-width: 640px) { form { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Loom21 Buy button</h1>
+  <p>These buttons use a mock Storefront API (<code>/mock-api</code>), so nothing is charged. A checkout is paid after about 16 seconds, or at once from the card page.</p>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Default (follows the system theme)</h2>
+      <p>Lightning, on-chain and card; shipping with an address for Courier.</p>
+      <loom21-buy-button key="l21_pk_test_demo" product="raw-honey-500g" api-base="/mock-api/storefront/v1"></loom21-buy-button>
+    </div>
+    <div class="card">
+      <h2>Light, custom accent, fiat only</h2>
+      <p><code>theme="light" accent="#f5c400" price-display="fiat"</code></p>
+      <loom21-buy-button key="l21_pk_test_demo" product="raw-honey-500g" api-base="/mock-api/storefront/v1"
+        theme="light" accent="#f5c400" price-display="fiat" label="Get the honey"></loom21-buy-button>
+    </div>
+    <div class="card dark">
+      <h2>Dark</h2>
+      <p><code>theme="dark" accent="#9ad0ff"</code></p>
+      <loom21-buy-button key="l21_pk_test_demo" product="raw-honey-500g" api-base="/mock-api/storefront/v1"
+        theme="dark" accent="#9ad0ff"></loom21-buy-button>
+    </div>
+    <div class="card">
+      <h2>Bulgarian, a service</h2>
+      <p><code>locale="bg"</code>, no shipping for a service</p>
+      <loom21-buy-button key="l21_pk_test_demo" product="tasting-session" api-base="/mock-api/storefront/v1"
+        locale="bg" show-quantity="false"></loom21-buy-button>
+    </div>
+    <div class="card">
+      <h2>Sold out</h2>
+      <p>The product's availability is <code>out_of_stock</code>.</p>
+      <loom21-buy-button key="l21_pk_test_demo" product="beeswax-candle" api-base="/mock-api/storefront/v1"></loom21-buy-button>
+    </div>
+    <div class="card">
+      <h2>Sats only</h2>
+      <p><code>price-display="sats"</code></p>
+      <loom21-buy-button key="l21_pk_test_demo" product="raw-honey-500g" api-base="/mock-api/storefront/v1"
+        price-display="sats"></loom21-buy-button>
+    </div>
+  </div>
+
+  <h2>Try your own storefront</h2>
+  <p>Add <code>http://localhost:5173</code> to Allowed websites in Settings → Storefronts → Developer first.</p>
+  <form id="own">
+    <label>Publishable key <input name="key" placeholder="l21_pk_live_…" required></label>
+    <label>Product slug <input name="product" required></label>
+    <label>API base <input name="api" value="https://app.loom21.com/storefront/v1"></label>
+    <button>Add button</button>
+  </form>
+  <div id="own-out" class="grid"></div>
+
+  <h2>Events</h2>
+  <pre id="log">Open a checkout to see loom21:* events here.</pre>
+</main>
+
+<script src="/dist/buy-button.js" defer></script>
+<script>
+  const log = document.getElementById('log');
+  for (const name of ['loom21:open', 'loom21:checkout-created', 'loom21:paid', 'loom21:expired', 'loom21:closed'])
+    document.addEventListener(name, e => {
+      if (log.textContent.startsWith('Open')) log.textContent = '';
+      log.textContent = `${new Date().toLocaleTimeString()}  ${name}  ${JSON.stringify(e.detail)}\n` + log.textContent;
+    });
+  document.getElementById('own').addEventListener('submit', e => {
+    e.preventDefault();
+    const data = new FormData(e.target);
+    const button = document.createElement('loom21-buy-button');
+    button.setAttribute('key', data.get('key').trim());
+    button.setAttribute('product', data.get('product').trim());
+    if (data.get('api').trim()) button.setAttribute('api-base', data.get('api').trim());
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.append(button);
+    document.getElementById('own-out').prepend(card);
+  });
+</script>
+</body>
+</html>

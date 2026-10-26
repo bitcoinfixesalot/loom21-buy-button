@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>e2e fixture</title>
+</head>
+<body>
+  <p><a href="#" id="before">Before</a></p>
+  <div id="host"></div>
+  <script>
+    window.__events = [];
+    for (const name of ['loom21:open', 'loom21:checkout-created', 'loom21:paid', 'loom21:expired', 'loom21:closed'])
+      document.addEventListener(name, e => window.__events.push({ name, detail: e.detail }));
+  </script>
+  <script src="/dist/buy-button.js"></script>
+</body>
+</html>

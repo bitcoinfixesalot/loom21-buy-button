@@ -1,0 +1,51 @@
+{
+  "name": "@loom21/buy-button",
+  "version": "1.0.0",
+  "description": "One line of HTML that sells a Loom21 product on any website: Lightning, on-chain Bitcoin and card checkout on the public Storefront API.",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/esm/index.js",
+  "module": "./dist/esm/index.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/esm/index.js"
+    },
+    "./buy-button.js": "./dist/buy-button.js"
+  },
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
+  "sideEffects": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bitcoinfixesalot/loom21-buy-button.git"
+  },
+  "homepage": "https://github.com/bitcoinfixesalot/loom21-buy-button#readme",
+  "keywords": [
+    "loom21",
+    "bitcoin",
+    "lightning",
+    "checkout",
+    "buy-button",
+    "web-component"
+  ],
+  "scripts": {
+    "build": "node esbuild.config.mjs && tsc -p tsconfig.build.json && node scripts/size-check.mjs",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "demo": "node esbuild.config.mjs && node scripts/serve.mjs"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1",
+    "@types/node": "22.20.5",
+    "esbuild": "0.28.2",
+    "jsqr": "1.4.0",
+    "typescript": "5.9.3",
+    "vitest": "5.0.5"
+  }
+}
